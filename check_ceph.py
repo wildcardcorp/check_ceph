@@ -19,10 +19,13 @@ import sys, argparse, json, subprocess
 
 def checkHealth(args):
 
-    ceph_health_json=subprocess.check_output(["ceph --id {0} -c {1} -k {2} --format json health".format(args.id, args.conf, args.keyring)],shell=True)
+    ceph_health_json = subprocess.check_output(
+        ["ceph --id {0} -c {1} -k {2} --format json health".format(args.id, args.conf, args.keyring)], shell=True)
     ceph_health_dict = json.loads(ceph_health_json)
 
-    if ceph_health_dict['status'] == 'HEALTH_WARN':
+    if ceph_health_dict['status'] == 'HEALTH_ERR':
+        print "%s: %s" % (ceph_health_dict['status'], ceph_health_dict['checks'].keys())
+    elif ceph_health_dict['status'] == 'HEALTH_WARN':
         print "%s: %s" % (ceph_health_dict['overall_status'], ceph_health_dict['summary'][0]['summary'])
         sys.exit(1)
     elif ceph_health_dict['status'] == 'HEALTH_OK':
