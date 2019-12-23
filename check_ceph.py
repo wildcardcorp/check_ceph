@@ -28,9 +28,16 @@ def checkHealth(args):
     ceph_health_dict = json.loads(ceph_health_json)
 
     if ceph_health_dict['status'] == 'HEALTH_ERR':
-        print "%s: %s" % (ceph_health_dict['status'], ceph_health_dict['checks'].keys())
+        try:
+            print "%s: %s" % (ceph_health_dict['overall_status'], ceph_health_dict['summary'][0]['summary'])
+        except KeyError:
+            print "%s: %s" % (ceph_health_dict['status'], ceph_health_dict['checks'].keys()[0])
+        sys.exit(2)
     elif ceph_health_dict['status'] == 'HEALTH_WARN':
-        print "%s: %s" % (ceph_health_dict['overall_status'], ceph_health_dict['summary'][0]['summary'])
+        try:
+            print "%s: %s" % (ceph_health_dict['overall_status'], ceph_health_dict['summary'][0]['summary'])
+        except KeyError:
+            print "%s: %s" % (ceph_health_dict['status'], ceph_health_dict['checks'].keys()[0])
         sys.exit(1)
     elif ceph_health_dict['status'] == 'HEALTH_OK':
         print "%s" % (ceph_health_dict['status'])
