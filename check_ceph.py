@@ -52,7 +52,12 @@ def checkOSD(args):
     osd_stat_json = subprocess.check_output(
         ["ceph --id {0} -c {1} -k {2} --format json osd stat".format(args.id, args.conf, args.keyring)], shell=True)
     osd_stat_dict = json.loads(osd_stat_json)
-    osd_not_up = osd_stat_dict['num_osds'] - osd_stat_dict['num_up_osds']
+    try:
+        osd_not_up = osd_stat_dict['num_osds'] - osd_stat_dict['num_up_osds']
+    except KeyError:
+        osd_stat_dict = osd_stat_dict['osdmap']
+        osd_not_up = osd_stat_dict['num_osds'] - osd_stat_dict['num_up_osds']
+    
     osd_not_in = osd_stat_dict['num_osds'] - osd_stat_dict['num_in_osds']
     perf_string = "num_osds={0} num_up_osds={1} num_in_osds={2}".format(
         osd_stat_dict['num_osds'], osd_stat_dict['num_up_osds'], osd_stat_dict['num_in_osds'])
