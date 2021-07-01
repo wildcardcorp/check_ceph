@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/python3
 
 # Examples:
 # osd status, warn at 2 missing, crit at 3: ./check_ceph.py -C ceph.conf --id icinga -k ceph.client.icinga.keyring --osd -w 2 -c 3
@@ -29,18 +29,18 @@ def checkHealth(args):
 
     if ceph_health_dict['status'] == 'HEALTH_ERR':
         try:
-            print "%s: %s" % (ceph_health_dict['overall_status'], ceph_health_dict['summary'][0]['summary'])
+            print ("%s: %s" % ceph_health_dict['overall_status'], ceph_health_dict['summary'][0]['summary'])
         except KeyError:
-            print "%s: %s" % (ceph_health_dict['status'], ceph_health_dict['checks'].keys()[0])
+            print ("%s: %s" % ceph_health_dict['status'], ceph_health_dict['checks'].keys()[0])
         sys.exit(2)
     elif ceph_health_dict['status'] == 'HEALTH_WARN':
         try:
-            print "%s: %s" % (ceph_health_dict['overall_status'], ceph_health_dict['summary'][0]['summary'])
+            print ("%s: %s" % ceph_health_dict['overall_status'], ceph_health_dict['summary'][0]['summary'])
         except KeyError:
-            print "%s: %s" % (ceph_health_dict['status'], ceph_health_dict['checks'].keys()[0])
+            print ("%s: %s" % ceph_health_dict['status'], ceph_health_dict['checks'].keys()[0])
         sys.exit(1)
     elif ceph_health_dict['status'] == 'HEALTH_OK':
-        print "%s" % (ceph_health_dict['status'])
+        print ("%s" % ceph_health_dict['status'])
         sys.exit(0)
 
 
@@ -64,16 +64,16 @@ def checkOSD(args):
 
 # Build in logic to handle the full and near full keys that are returned in the json
     if (osd_not_up >= WARN and osd_not_up < CRIT) or (osd_not_in >= WARN and osd_not_in < CRIT):
-        print "WARNING: ALL OSDs are not up and in. {0} OSDS. {1} up, {2} in|{3}".format(osd_stat_dict['num_osds'], osd_stat_dict['num_up_osds'], osd_stat_dict['num_in_osds'], perf_string)
+        print ("WARNING: ALL OSDs are not up and in. {0} OSDS. {1} up, {2} in|{3}".format(osd_stat_dict['num_osds'], osd_stat_dict['num_up_osds'], osd_stat_dict['num_in_osds'], perf_string))
         sys.exit(1)
     elif (osd_not_up >= CRIT) or (osd_not_in >= CRIT):
-        print "CRITICAL: ALL OSDs are not up and in. {0} OSDS. {1} up, {2} in|{3}".format(osd_stat_dict['num_osds'], osd_stat_dict['num_up_osds'], osd_stat_dict['num_in_osds'], perf_string)
+        print ("CRITICAL: ALL OSDs are not up and in. {0} OSDS. {1} up, {2} in|{3}".format(osd_stat_dict['num_osds'], osd_stat_dict['num_up_osds'], osd_stat_dict['num_in_osds'], perf_string))
         sys.exit(2)
     elif (osd_stat_dict['num_osds'] == osd_stat_dict['num_in_osds']) and (osd_stat_dict['num_osds'] == osd_stat_dict['num_up_osds']):
-        print "ALL OSDs are up and in. {0} OSDS. {1} up, {2} in|{3}".format(osd_stat_dict['num_osds'], osd_stat_dict['num_up_osds'], osd_stat_dict['num_in_osds'], perf_string)
+        print ("ALL OSDs are up and in. {0} OSDS. {1} up, {2} in|{3}".format(osd_stat_dict['num_osds'], osd_stat_dict['num_up_osds'], osd_stat_dict['num_in_osds'], perf_string))
         sys.exit(0)
     else:
-        print "Script shouldn't reach this point. Thar be bugs!"
+        print ("Script shouldn't reach this point. Thar be bugs!")
         sys.exit(3)
 
 
@@ -105,13 +105,13 @@ def checkPG(args):
         perf_string += "%s=%s " % (x['name'], x['num'])
 # Maybe build in a percentage based threshold for users who want to have thresholds like that
     if active_pgs < num_pgs:
-        print "WARNING: All PGs are not active+clean: {0} PGs Total, {1}|{1}".format(num_pgs, perf_string)
+        print ("WARNING: All PGs are not active+clean: {0} PGs Total, {1}|{1}".format(num_pgs, perf_string))
         sys.exit(1)
     elif active_pgs == num_pgs:
-        print "All PGs are active+clean: {0} PGs Total, {1}|{1}".format(num_pgs, perf_string)
+        print ("All PGs are active+clean: {0} PGs Total, {1}|{1}".format(num_pgs, perf_string))
         sys.exit(0)
     else:
-        print "Script shouldn't reach this point. Thar be bugs!"
+        print ("Script shouldn't reach this point. Thar be bugs!")
         sys.exit(3)
 
 
@@ -127,7 +127,7 @@ def checkPerf(args):
         pg_stat_dict['io_sec'] = 0
     perf_string = "read_bytes_sec={0} write_bytes_sec={1} io_sec={2}".format(
         pg_stat_dict['read_bytes_sec'], pg_stat_dict['write_bytes_sec'], pg_stat_dict['io_sec'])
-    print "Healthy: Additional perf stats for cluster {0}|{0}".format(perf_string)
+    print ("Healthy: Additional perf stats for cluster {0}|{0}".format(perf_string))
     sys.exit(0)
 
 
@@ -177,16 +177,16 @@ def checkDF(args):
         #        print pool_stats[args.pool]
         # add in percentage later
         if (pool_stats[args.pool]['max_avail'] < WARN) and (pool_stats[args.pool]['max_avail'] > CRIT):
-            print "WARNING: Ceph pool {0} has {1}{2} availbale|{3}".format(args.pool, pool_stats[args.pool]['max_avail'], perf_metric, perf_string)
+            print ("WARNING: Ceph pool {0} has {1}{2} availbale|{3}".format(args.pool, pool_stats[args.pool]['max_avail'], perf_metric, perf_string))
             sys.exit(1)
         elif pool_stats[args.pool]['max_avail'] < CRIT:
-            print "CRITICAL: Ceph pool {0} has {1}{2} availbale|{3}".format(args.pool, pool_stats[args.pool]['max_avail'], perf_metric, perf_string)
+            print ("CRITICAL: Ceph pool {0} has {1}{2} availbale|{3}".format(args.pool, pool_stats[args.pool]['max_avail'], perf_metric, perf_string))
             sys.exit(2)
         elif pool_stats[args.pool]['max_avail'] > WARN:
-            print "Healthy: Ceph pool {0} has {1}{2} availbale|{3}".format(args.pool, pool_stats[args.pool]['max_avail'], perf_metric, perf_string)
+            print ("Healthy: Ceph pool {0} has {1}{2} availbale|{3}".format(args.pool, pool_stats[args.pool]['max_avail'], perf_metric, perf_string))
             sys.exit(0)
         else:
-            print "Script shouldn't reach this point. Thar be bugs!"
+            print ("Script shouldn't reach this point. Thar be bugs!")
             sys.exit(3)
 
     else:
@@ -203,15 +203,15 @@ def checkDF(args):
                     key, pool_stats[key]['max_avail'], perf_metric))
 
         if (len(warn_list) > 0) and (len(crit_list) == 0):
-            print "WARNING: Ceph pool(s) low on free space. {0}|{1}".format(warn_list, perf_string)
+            print ("WARNING: Ceph pool(s) low on free space. {0}|{1}".format(warn_list, perf_string))
             sys.exit(1)
         elif len(crit_list) > 0:
-            print "CRITICAL: Ceph pool(s) critically low on free space. Critial:{0} Warning:{1}|{2}".format(crit_list, warn_list, perf_string)
+            print ("CRITICAL: Ceph pool(s) critically low on free space. Critial:{0} Warning:{1}|{2}".format(crit_list, warn_list, perf_string))
             sys.exit(2)
         elif (len(warn_list) == 0) and (len(crit_list) == 0):
-            print "Healthy: All ceph pools are within free space thresholds|{0}".format(perf_string)
+            print ("Healthy: All ceph pools are within free space thresholds|{0}".format(perf_string))
         else:
-            print "Script shouldn't reach this point. Thar be bugs!"
+            print ("Script shouldn't reach this point. Thar be bugs!")
             sys.exit(3)
 
 
@@ -220,7 +220,7 @@ if __name__ == "__main__":
         description='Runs health checks against a ceph cluster. This is designed to run on the monitoring server using the ceph client software. Supply a ceph.conf, keyring, and user to access the cluster.')
     parser.add_argument(
         '-C', '--conf', help='ceph.conf file, defaults to /etc/ceph/ceph.conf.')
-    parser.add_argument('-id', '--id', help='Ceph authx user', required=True)
+    parser.add_argument('-id', '--id', help='Ceph authx user')
     parser.add_argument(
         '-k', '--keyring', help='Path to ceph keyring if not in /etc/ceph/client.\$id.keyring')
     parser.add_argument(
