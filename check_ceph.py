@@ -24,7 +24,7 @@ import subprocess
 def checkHealth(args):
 
     ceph_health_json = subprocess.check_output(
-        ["ceph --format json health".format(args.id, args.conf, args.keyring)], shell=True)
+        ["ceph --format json health", shell=True)
     ceph_health_dict = json.loads(ceph_health_json)
 
     if ceph_health_dict['status'] == 'HEALTH_ERR':
@@ -50,7 +50,7 @@ def checkOSD(args):
     if args.critical:
         CRIT = float(args.critical)
     osd_stat_json = subprocess.check_output(
-        ["ceph --format json osd stat".format(args.id, args.conf, args.keyring)], shell=True)
+        ["ceph --format json osd stat", shell=True)
     osd_stat_dict = json.loads(osd_stat_json)
     try:
         osd_not_up = osd_stat_dict['num_osds'] - osd_stat_dict['num_up_osds']
@@ -87,7 +87,7 @@ def checkMON(args):
 
 def checkPG(args):
     pg_stat_json = subprocess.check_output(
-        ["ceph --format json pg stat".format(args.id, args.conf, args.keyring)], shell=True)
+        ["ceph --format json pg stat", shell=True)
     pg_stat_dict = json.loads(pg_stat_json)
     # cheap fix for nautilus change in json output
     if 'num_pgs' in pg_stat_dict.keys():
@@ -117,7 +117,7 @@ def checkPG(args):
 
 def checkPerf(args):
     pg_stat_json = subprocess.check_output(
-        ["ceph --format json pg stat".format(args.id, args.conf, args.keyring)], shell=True)
+        ["ceph --format json pg stat"], shell=True)
     pg_stat_dict = json.loads(pg_stat_json)
     if 'read_bytes_sec' not in pg_stat_dict:
         pg_stat_dict['read_bytes_sec'] = 0
@@ -151,7 +151,7 @@ def checkDF(args):
         perf_metric = "TB"
 
     ceph_df_json = subprocess.check_output(
-        ["ceph --format json df".format(args.id, args.conf, args.keyring)], shell=True)
+        ["ceph --format json df"], shell=True)
     ceph_df_dict = json.loads(ceph_df_json)
     # get global stats
     global_bytes, global_used_bytes, global_avail_bytes = ceph_df_dict['stats'][
