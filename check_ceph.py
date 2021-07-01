@@ -50,7 +50,7 @@ def checkOSD(args):
     if args.critical:
         CRIT = float(args.critical)
     osd_stat_json = subprocess.check_output(
-        ["ceph --format json osd stat", shell=True)
+        ["ceph --format json osd stat"], shell=True)
     osd_stat_dict = json.loads(osd_stat_json)
     try:
         osd_not_up = osd_stat_dict['num_osds'] - osd_stat_dict['num_up_osds']
