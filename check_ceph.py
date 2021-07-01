@@ -24,7 +24,7 @@ import subprocess
 def checkHealth(args):
 
     ceph_health_json = subprocess.check_output(
-        ["ceph --format json health", shell=True)
+        ["ceph --format json health"], shell=True)
     ceph_health_dict = json.loads(ceph_health_json)
 
     if ceph_health_dict['status'] == 'HEALTH_ERR':
@@ -87,7 +87,7 @@ def checkMON(args):
 
 def checkPG(args):
     pg_stat_json = subprocess.check_output(
-        ["ceph --format json pg stat", shell=True)
+        ["ceph --format json pg stat"], shell=True)
     pg_stat_dict = json.loads(pg_stat_json)
     # cheap fix for nautilus change in json output
     if 'num_pgs' in pg_stat_dict.keys():
