@@ -29,7 +29,7 @@ def checkHealth(args):
 
     if ceph_health_dict['status'] == 'HEALTH_ERR':
         try:
-            print ("%s: %s" % ceph_health_dict['overall_status'], ceph_health_dict['summary'][0]['summary'])
+            print ("%s: %s" % ceph_health_dict['overall_status'], ceph_health_dict['checks'][0]['checks'])
         except KeyError:
             print ("%s: %s" % ceph_health_dict['status'], ceph_health_dict['checks'].keys()[0])
         sys.exit(2)
