@@ -27,22 +27,17 @@ def checkHealth(args):
         ["ceph --format json health"], shell=True)
     ceph_health_dict = json.loads(ceph_health_json)
 
-    if ceph_health_dict['status'] == 'HEALTH_ERR':
-        try:
-            print ("%s: %s" % ceph_health_dict['overall_status'], ceph_health_dict['checks'][0]['checks'])
-        except KeyError:
-            print ("%s: %s" % ceph_health_dict['status'], ceph_health_dict['checks'].keys()[0])
-        sys.exit(2)
-    elif ceph_health_dict['status'] == 'HEALTH_WARN':
-        try:
-            print ("%s: %s" % ceph_health_dict['overall_status'], ceph_health_dict['summary'][0]['summary'])
-        except KeyError:
-            print ("%s: %s" % ceph_health_dict['status'], ceph_health_dict['checks'].keys()[0])
-        sys.exit(1)
-    elif ceph_health_dict['status'] == 'HEALTH_OK':
-        print ("%s" % ceph_health_dict['status'])
-        sys.exit(0)
+    ceph_health_json = subprocess.check_output(
+        ["ceph --format json health"], shell=True)
+    ceph_health_dict = json.loads(ceph_health_json)
+    print ("%s" % ceph_health_dict['status'])
 
+    if ceph_health_dict['status'] == 'HEALTH_OK':
+        sys.ext(0)
+    ceph_health = subprocess.check_output(
+        ["ceph health detail"], shell=True)
+    print("%s" % ceph_health)
+    sys.exit(1)
 
 def checkOSD(args):
     if args.warning:
